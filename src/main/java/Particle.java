@@ -43,6 +43,17 @@ public class Particle {
         return (other.x - x)/centerDistance(other);
     }
 
+    public double centerDistanceToPoint(double x, double y){
+        return Math.sqrt(Math.pow(x - this.x, 2) + Math.pow(y - this.y, 2));
+    }
+
+    public double eTargetX(double x, double y) {
+        return (x - this.x)/centerDistanceToPoint(x, y);
+    }
+    public double eTargetY(double x, double y) {
+        return (y - this.y)/centerDistanceToPoint(x, y);
+    }
+
     public double eny(Particle other) {
         return (other.y - y)/centerDistance(other);
     }
@@ -77,7 +88,7 @@ public class Particle {
 
     @Override
     public String toString() {
-        return String.format(Locale.ENGLISH, "%d %.12f %.12f %.4f %.8f", id, x, y, r, fn/perimeter);
+        return String.format(Locale.ENGLISH, "%d %.12f %.12f %.4f", id, x, y, r);
     }
 
 
