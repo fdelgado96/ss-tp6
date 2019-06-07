@@ -48,7 +48,6 @@ public class Simulation {
         int lastFrame = 1, lastMeasure = 1, lastStepPrint = 0;
         System.out.println("Starting simulation");
 
-        List<Particle> outParticles;
         List<Double> exitTimes = new LinkedList<>();
 
         while(simTime < MAX_SIM_TIME) {
@@ -156,15 +155,15 @@ public class Simulation {
 
         double distanceBetweenBorders = p1.centerDistance(p2) - p1.r - p2.r;
 
-        double fn = A*Math.exp(-distanceBetweenBorders/B);
+        double fn = -A*Math.exp(-distanceBetweenBorders/B);
 
         double fx = fn * enx;
         double fy = fn * eny;
 
-        p1.fx -= fx;
-        p1.fy -= fy;
-        p2.fx += fx;
-        p2.fy += fy;
+        p1.fx += fx;
+        p1.fy += fy;
+        p2.fx -= fx;
+        p2.fy -= fy;
     }
 
     private static void applyGranularForce(Particle p1, Particle p2, double overlap) {
@@ -205,6 +204,7 @@ public class Simulation {
     private static void initWalls(double width, double height, double slitSize) {
         walls.add(new Wall(0, 0, 0, height, -1, 0));
         walls.add(new Wall(width, 0, width, height, 1, 0));
+        walls.add(new Wall(0, height, width, height, 0, 1));
         if(slitSize == 0) {
             walls.add(new Wall(0, 0, width, 0, 0, -1));
         }else{

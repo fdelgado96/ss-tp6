@@ -2,7 +2,7 @@ import java.util.Locale;
 
 public class Particle {
 
-    public double x, y, vx, vy, fx, fy, m = 0.01, prevX, prevY, r, fn, perimeter;
+    public double x, y, vx, vy, fx, fy, m = 1, prevX, prevY, r, fn, perimeter;
 
     private boolean initialized = false;
     private int id;
