@@ -116,9 +116,9 @@ public class Simulation {
         System.out.println("Printing measures");
         System.out.println(String.format("Evacuated particles: %d", exitTimes.size()));
 
-        printList(kineticEnergy, "data/" + DESIRED_VEL + "_" + gamma + "_" + BASE + "e-" + EXP + "_kineticEnergy_" + RUN + ".csv");
-        printList(times, "data/" + DESIRED_VEL + "_" + gamma + "_" + BASE + "e-" + EXP + "_times_" + RUN + ".csv");
-        printList(exitTimes, "data/" + DESIRED_VEL + "_" + gamma + "_" + BASE + "e-" + EXP + "_exitTimes_" + RUN + ".csv");
+        printList(kineticEnergy, "data/" + DESIRED_VEL + "_" + gamma + "_" + BASE + "e-" + EXP + "_" + THICC_MODE + "_kineticEnergy_" + RUN + ".csv");
+        printList(times, "data/" + DESIRED_VEL + "_" + gamma + "_" + BASE + "e-" + EXP + "_" + THICC_MODE + "_times_" + RUN + ".csv");
+        printList(exitTimes, "data/" + DESIRED_VEL + "_" + gamma + "_" + BASE + "e-" + EXP + "_" + THICC_MODE + "_exitTimes_" + RUN + ".csv");
 
     }
 
