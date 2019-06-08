@@ -2,7 +2,8 @@ import java.util.Locale;
 
 public class Particle {
 
-    public double x, y, vx, vy, fx, fy, m = 1, prevX, prevY, r, fn, perimeter;
+    public double x, y, vx, vy, fx, fy, m = 80, prevX, prevY, r, fn, perimeter;
+    public boolean isOut = false;
 
     private boolean initialized = false;
     private int id;
@@ -11,6 +12,7 @@ public class Particle {
         this.x = x;
         this.y = y;
         this.r = r;
+        this.m = r * 700 - 105;
         this.id = id;
         this.perimeter = Math.PI * 2 * r;
     }
@@ -88,7 +90,7 @@ public class Particle {
 
     @Override
     public String toString() {
-        return String.format(Locale.ENGLISH, "%d %.12f %.12f %.4f", id, x, y, r);
+        return String.format(Locale.ENGLISH, "%d %.12f %.12f %.4f %.8f", id, x, y, r, fn/perimeter);
     }
 
 

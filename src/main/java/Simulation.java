@@ -64,7 +64,7 @@ public class Simulation {
             });
 
             // Add interaction forces between particles
-            IntStream.range(0, particles.size()).forEach(i -> {
+            IntStream.range(0, particles.size()).parallel().forEach(i -> {
                 Particle pi = particles.get(i);
 
                 for (int j = i + 1; j < particles.size(); j++) {
@@ -80,10 +80,15 @@ public class Simulation {
             // Move particles a DT time and filter the ones that are out
             particles = particles.parallelStream().peek(p -> {
                 p.move(DT);
-            }).filter(Simulation::isIn).collect(Collectors.toList());
+            }).filter(Simulation::isInScene).collect(Collectors.toList());
 
             // Add DT to simulation time
             simTime += DT;
+
+            particles.parallelStream().filter(Simulation::isOut).forEach((p) -> {
+                    exitTimes.add(simTime);
+                    p.isOut = true;
+                });
 
 
             if (simTime / STEP_PRINT_DT > lastStepPrint) {
@@ -106,7 +111,7 @@ public class Simulation {
         writer.close();
 
         System.out.println("Printing measures");
-        System.out.println(String.format("Reinserted particles: %d", exitTimes.size()));
+        System.out.println(String.format("Evacuated particles: %d", exitTimes.size()));
 
         printList(kineticEnergy, "data/" + DESIRED_VEL + "_" + gamma + "_" + BASE + "e-" + EXP + "_kineticEnergy.csv");
         printList(times, "data/" + DESIRED_VEL + "_" + gamma + "_" + BASE + "e-" + EXP + "_times.csv");
@@ -115,11 +120,11 @@ public class Simulation {
     }
 
     private static boolean isOut(Particle p) {
-        return p.y <= - HEIGHT / 10;
+        return !p.isOut && p.y < 0;
     }
 
-    private static boolean isIn(Particle p) {
-        return !isOut(p);
+    private static boolean isInScene(Particle p) {
+        return p.y > - HEIGHT / 10;
     }
 
     private static void applyDrivingForce(Particle p) {
