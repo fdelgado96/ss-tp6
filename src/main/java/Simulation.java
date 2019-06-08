@@ -5,6 +5,8 @@ import java.util.stream.IntStream;
 
 public class Simulation {
 
+    private static final int    RUN = 3;
+
     private static final int    BASE = 1;                       // DT base
     private static final int    EXP = 5;                        // DT exp
     private static final double DT = BASE * Math.pow(10, -EXP); // Step delta time
@@ -37,7 +39,7 @@ public class Simulation {
 
     public static void main(String[] args) throws Exception{
         System.out.println(String.format("N: %d", N));
-        PrintWriter writer = new PrintWriter("data/" + DESIRED_VEL + "_" + gamma + "_" + BASE + "e-" + EXP + "_simulation.xyz");
+        PrintWriter writer = new PrintWriter("data/" + DESIRED_VEL + "_" + gamma + "_" + BASE + "e-" + EXP + "_simulation_" + RUN + ".xyz");
 
         initWalls(WIDTH, HEIGHT, SLIT_SIZE);
         initParticles(N, WIDTH, HEIGHT, MIN_PARTICLE_R, MAX_PARTICLE_R);
@@ -50,7 +52,7 @@ public class Simulation {
 
         List<Double> exitTimes = new LinkedList<>();
 
-        while(simTime < MAX_SIM_TIME) {
+        while(particles.size() > 0) {
             // Clear forces and add interaction forces with walls to particles and add driving force
             particles.parallelStream().forEach(p -> {
                 p.clearForces();
@@ -113,9 +115,9 @@ public class Simulation {
         System.out.println("Printing measures");
         System.out.println(String.format("Evacuated particles: %d", exitTimes.size()));
 
-        printList(kineticEnergy, "data/" + DESIRED_VEL + "_" + gamma + "_" + BASE + "e-" + EXP + "_kineticEnergy.csv");
-        printList(times, "data/" + DESIRED_VEL + "_" + gamma + "_" + BASE + "e-" + EXP + "_times.csv");
-        printList(exitTimes, "data/" + DESIRED_VEL + "_" + gamma + "_" + BASE + "e-" + EXP + "_exitTimes.csv");
+        printList(kineticEnergy, "data/" + DESIRED_VEL + "_" + gamma + "_" + BASE + "e-" + EXP + "_kineticEnergy_" + RUN + ".csv");
+        printList(times, "data/" + DESIRED_VEL + "_" + gamma + "_" + BASE + "e-" + EXP + "_times_" + RUN + ".csv");
+        printList(exitTimes, "data/" + DESIRED_VEL + "_" + gamma + "_" + BASE + "e-" + EXP + "_exitTimes_" + RUN + ".csv");
 
     }
 
