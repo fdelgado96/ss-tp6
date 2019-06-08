@@ -2,54 +2,53 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy.stats as stats
+import math
 
 PATHS = [
-    '../data/0.15_70.0_1e-5_exitTimes.csv',
-    '../data/0.183_70.0_1e-5_exitTimes.csv',
-    '../data/0.216_70.0_1e-5_exitTimes.csv',
-    '../data/0.25_70.0_1e-5_exitTimes.csv'
+    '../data/6.0_140.0_1e-5_false_exitTimes_{}.csv'
 ]
 LABELS = [
-    'D = 15cm',
-    'D = 18cm',
-    'D = 22cm',
-    'D = 25cm'
+    'V = 6 m/s'
 ]
 
-NUMBER_OF_WINDOWS = 50
-WINDOW_SIZE = 200
+BUCKET_SIZE = 5
+
 
 def get_sliding_window_measures(path):
-    times = np.genfromtxt(path)
-    total_windows = times.size - WINDOW_SIZE + 1
-    if total_windows < NUMBER_OF_WINDOWS:
-        raise ValueError('the amount of particles measured is smaller than the minimum required')
+    times = []
+    deltas = []
 
-    sliding_window_means = np.zeros(total_windows)
-    sliding_window_stds = np.zeros(total_windows)
+    for i in range(1, 11):
+        file_times = np.genfromtxt(path.format(i))
+        # convertir de tiempo acumulado a diferencias
+        file_deltas = np.diff(file_times)
 
-    #convertir de tiempo acumulado a diferencias
-    deltas = np.diff(times)
+        times.append(file_times[1:])
+        deltas.append(file_deltas)
 
-    #iterar el sliding window
-    for i in range(0, total_windows):
-        sliding_window_means[i] = 1/np.mean(deltas[i:i+WINDOW_SIZE-1])
-        sliding_window_stds[i] = 1/np.std(deltas[i:i+WINDOW_SIZE-1])
+    times = np.concatenate(times)
+    deltas = np.concatenate(deltas)
 
-    return times[WINDOW_SIZE-1:], sliding_window_means, sliding_window_stds
+    bins = np.array(range(0, math.ceil(times.max()) + BUCKET_SIZE, BUCKET_SIZE))
+    digitized = np.digitize(times, bins)
+    bin_centers = 0.5 * (bins[1:] + bins[:-1])
+    bin_means = [1 / deltas[digitized == i].mean() for i in range(1, len(bins))]
+    bin_stds = [1 / deltas[digitized == i].std() for i in range(1, len(bins))]
+
+    return bin_centers, bin_means, bin_stds
 
 
 total_measures = []
 for i in range(len(PATHS)):
     times, means, stds = get_sliding_window_measures(PATHS[i])
     m, b, r, _, _ = stats.linregress(times, means)
-    plt.plot(times, means, 'o', markersize=1, label=LABELS[i])
-    plt.plot([times[0], times[-1]], [m*times[0] + b, m*times[-1] + b])
+    plt.errorbar(times, means, fmt='-o', label=LABELS[i])
+    #plt.plot([times[0], times[-1]], [m*times[0] + b, m*times[-1] + b])
     print('m: {:.2E} - b: {:.2E} - r {:.2E}'.format(m, b, r))
     print('mean: {:.2E} - std: {:.2E}'.format(np.mean(means), np.std(means)))
 
 plt.ylabel('Caudal en partículas por segundo')
 plt.xlabel('Tiempo [s]')
-plt.ylim(300, 1200)
-plt.legend(loc='upper right')
+plt.ylim(0, 10)
+plt.legend()
 plt.show()
