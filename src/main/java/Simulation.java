@@ -16,7 +16,8 @@ public class Simulation {
     private static final double WIDTH = 20;
     private static final double HEIGHT = 20;
     private static final double SLIT_SIZE = 1.2;
-    private static final double k = 10e5;
+    private static final double k = 1.2e5;
+    private static final double kt = 2.4e5;
     private static final double gamma = 140;
     private static final double A = 2000;
     private static final double B = 0.08;
@@ -179,12 +180,13 @@ public class Simulation {
         double enx = p1.enx(p2);
         double eny = p1.eny(p2);
 
-        double normalRelVel = p1.getNormalRelVel(p2);
+        double tangentRelVel = p1.getTangentRelVel(p2);
 
-        double fn = -k*overlap - gamma*normalRelVel;
+        double ft = -kt*overlap*tangentRelVel;
+        double fn = -k*overlap;
 
-        double fx = fn * enx;
-        double fy = fn * eny;
+        double fx = fn * enx -eny*ft;
+        double fy = fn * eny + enx*ft;
 
         double fn_mod = Math.abs(fn);
         p1.fn += fn_mod;

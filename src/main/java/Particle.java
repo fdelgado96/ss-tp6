@@ -96,4 +96,7 @@ public class Particle {
     }
 
 
+    public double getTangentRelVel(Particle p2) {
+        return ((vx - p2.vx) * -eny(p2)) + ((vy - p2.vy) * enx(p2));
+    }
 }
