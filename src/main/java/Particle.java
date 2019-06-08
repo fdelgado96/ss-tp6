@@ -8,11 +8,13 @@ public class Particle {
     private boolean initialized = false;
     private int id;
 
-    public Particle(int id, double x, double y, double r) {
+    public Particle(int id, double x, double y, double r, boolean thicc_mode) {
         this.x = x;
         this.y = y;
         this.r = r;
-        this.m = r * 700 - 105;
+        if  (thicc_mode) {
+            this.m = r * 700 - 105;
+        }
         this.id = id;
         this.perimeter = Math.PI * 2 * r;
     }

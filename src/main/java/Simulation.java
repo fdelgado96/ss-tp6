@@ -7,6 +7,8 @@ public class Simulation {
 
     private static final int    RUN = 10;
 
+    private static final double DESIRED_VEL = 2;
+    private static final boolean THICC_MODE = false;
     private static final int    BASE = 1;                       // DT base
     private static final int    EXP = 5;                        // DT exp
     private static final double DT = BASE * Math.pow(10, -EXP); // Step delta time
@@ -21,7 +23,6 @@ public class Simulation {
     private static final double tau = 0.5;
     private static final double SLIT_Xo = (WIDTH - SLIT_SIZE)/2;
     private static final double SLIT_Xf = ((WIDTH - SLIT_SIZE)/2) + SLIT_SIZE;
-    private static final double DESIRED_VEL = 2;
     private static final double MIN_PARTICLE_R = 0.25;          // Min particle radius
     private static final double MAX_PARTICLE_R = 0.29;         // Max particle radius
     private static final double STEP_PRINT_DT = 0.1;
@@ -39,7 +40,7 @@ public class Simulation {
 
     public static void main(String[] args) throws Exception{
         System.out.println(String.format("Run ID: %d - N: %d", RUN, N));
-        PrintWriter writer = new PrintWriter("data/" + DESIRED_VEL + "_" + gamma + "_" + BASE + "e-" + EXP + "_simulation_" + RUN + ".xyz");
+        PrintWriter writer = new PrintWriter("data/" + DESIRED_VEL + "_" + gamma + "_" + BASE + "e-" + EXP + "_" + THICC_MODE + "_simulation_" + RUN + ".xyz");
 
         initWalls(WIDTH, HEIGHT, SLIT_SIZE);
         initParticles(N, WIDTH, HEIGHT, MIN_PARTICLE_R, MAX_PARTICLE_R);
@@ -54,7 +55,7 @@ public class Simulation {
 
         while(particles.size() > 0) {
             // Clear forces and add interaction forces with walls to particles and add driving force
-            particles.parallelStream().forEach(p -> {
+            particles.forEach(p -> {
                 p.clearForces();
                 applyDrivingForce(p);
                 for (Wall w : walls) {
@@ -80,14 +81,14 @@ public class Simulation {
             });
 
             // Move particles a DT time and filter the ones that are out
-            particles = particles.parallelStream().peek(p -> {
+            particles = particles.stream().peek(p -> {
                 p.move(DT);
             }).filter(Simulation::isInScene).collect(Collectors.toList());
 
             // Add DT to simulation time
             simTime += DT;
 
-            particles.parallelStream().filter(Simulation::isOut).forEach((p) -> {
+            particles.stream().filter(Simulation::isOut).forEach((p) -> {
                     exitTimes.add(simTime);
                     p.isOut = true;
                 });
@@ -227,7 +228,7 @@ public class Simulation {
             double x = particleRadius + Math.random() * (width - 2 * particleRadius);
             double y = particleRadius + Math.random() * (height - 2 * particleRadius);
 
-            Particle newParticle = new Particle(particles.size(), x, y, particleRadius);
+            Particle newParticle = new Particle(particles.size(), x, y, particleRadius, THICC_MODE);
 
             boolean valid = particles.stream().parallel().allMatch(p -> p.getOverlap(newParticle) == 0);
 
