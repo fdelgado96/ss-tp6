@@ -5,7 +5,7 @@ import java.util.stream.IntStream;
 
 public class Simulation {
 
-    private static final int    RUN = 3;
+    private static final int    RUN = 10;
 
     private static final int    BASE = 1;                       // DT base
     private static final int    EXP = 5;                        // DT exp
@@ -38,7 +38,7 @@ public class Simulation {
     private static List<Double> times = new LinkedList<>();
 
     public static void main(String[] args) throws Exception{
-        System.out.println(String.format("N: %d", N));
+        System.out.println(String.format("Run ID: %d - N: %d", RUN, N));
         PrintWriter writer = new PrintWriter("data/" + DESIRED_VEL + "_" + gamma + "_" + BASE + "e-" + EXP + "_simulation_" + RUN + ".xyz");
 
         initWalls(WIDTH, HEIGHT, SLIT_SIZE);
@@ -66,7 +66,7 @@ public class Simulation {
             });
 
             // Add interaction forces between particles
-            IntStream.range(0, particles.size()).parallel().forEach(i -> {
+            IntStream.range(0, particles.size()).forEach(i -> {
                 Particle pi = particles.get(i);
 
                 for (int j = i + 1; j < particles.size(); j++) {
